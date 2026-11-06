@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<title>김경도 포트폴리오</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: 페이지 = 거래일 하루. 스크롤이 08:30 장전 동시호가 → 15:30 마감으로 시간을 진행시키고, 세션 리본이 그 진행을 보여준다. */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#0E1A2B; --muted:#4D5B6E; --line:#D5DCE6; --track:#E3E8F0;
+  --blue:#0B47C2; --blue-soft:#C9D6F2; --on-blue:#FFFFFF; --up:#CF3A2C;
+  --field:#0B47C2; --on-field:#FFFFFF; --on-field-2:#CBD8F6; --field-line:rgba(255,255,255,.22);
+  --font:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B111B; --surface:#121A27; --ink:#E8EDF4; --muted:#9BA8BA; --line:#243146; --track:#1A2434;
+  --blue:#4A86FF; --blue-soft:#24375C; --on-blue:#0B111B; --up:#FF6A5C;
+  --field:#14357F; --on-field:#FFFFFF; --on-field-2:#BFD0F5; --field-line:rgba(255,255,255,.18); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B111B; --surface:#121A27; --ink:#E8EDF4; --muted:#9BA8BA; --line:#243146; --track:#1A2434;
+  --blue:#4A86FF; --blue-soft:#24375C; --on-blue:#0B111B; --up:#FF6A5C;
+  --field:#14357F; --on-field:#FFFFFF; --on-field-2:#BFD0F5; --field-line:rgba(255,255,255,.18); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scrollbar-color:var(--line) var(--bg);accent-color:var(--blue)}
+body{margin:0;word-break:keep-all;overflow-wrap:break-word;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.7;letter-spacing:-.01em;overflow-x:hidden;caret-color:var(--blue);
+  -webkit-font-smoothing:antialiased;font-feature-settings:"ss06"}
+::selection{background:var(--blue);color:var(--on-blue)}
+a{color:inherit;text-underline-offset:.22em}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+.gut{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1200px;margin:0 auto}
+.tnum{font-variant-numeric:tabular-nums}
+svg.ic{width:1em;height:1em;flex:none}
+
+/* ── session ribbon ── */
+.rb{position:relative}
+.rb .bar{position:relative;display:flex;height:var(--h,14px);border-radius:3px;overflow:hidden}
+.rb .lay{position:absolute;inset:0;display:flex}
+.rb .seg{height:100%}
+.rb .pre{flex:30}.rb .reg{flex:380}.rb .post{flex:10}
+.rb .base .reg{background:var(--track)}
+.rb .base .pre,.rb .base .post{background:repeating-linear-gradient(-45deg,var(--track) 0 3px,transparent 3px 6px)}
+.rb .fill{clip-path:inset(0 calc((1 - var(--p,0)) * 100%) 0 0)}
+.rb .fill .reg{background:var(--blue)}
+.rb .fill .pre,.rb .fill .post{background:repeating-linear-gradient(-45deg,var(--blue) 0 3px,var(--blue-soft) 3px 6px)}
+.rb .gap{flex:0 0 2px;background:var(--bg)}
+.rb .times,.rb .labels{position:relative;height:22px;font-size:13px;color:var(--muted)}
+.rb .times span,.rb .labels a{position:absolute;top:0;white-space:nowrap}
+.rb .times{margin-bottom:8px}
+.rb .labels{margin-top:10px}
+.rb .labels a{text-decoration:none;color:var(--muted);transition:color .2s}
+.rb .labels a:hover{color:var(--ink)}
+.rb .labels a.on{color:var(--ink);font-weight:600}
+.rb .labels a::before{content:"";position:absolute;left:0;top:-10px;width:1px;height:8px;background:var(--line)}
+.rb .labels .end{position:absolute;right:0;top:0;display:flex;gap:14px}
+.rb .labels .end a{position:static}
+.rb .labels .end a::before{display:none}
+.rb .labels .end::before{content:"";position:absolute;right:0;top:-10px;width:1px;height:8px;background:var(--line)}
+
+/* ── top bar (appears after hero) ── */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.top{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:saturate(1.4) blur(12px);
+  border-bottom:1px solid var(--line);transform:translateY(-110%);transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.top.show{transform:none}
+.top .in{display:flex;align-items:center;gap:20px;height:56px}
+.top .who{font-weight:700;text-decoration:none;white-space:nowrap}
+.top .rb{flex:1;--h:6px;min-width:60px}
+.top nav{display:flex;gap:18px;font-size:14.5px}
+.top nav a{text-decoration:none;color:var(--muted)} .top nav a:hover,.top nav a.on{color:var(--ink)}
+.top .clk{font-size:14px;color:var(--muted);white-space:nowrap}
+.top .clk b{color:var(--ink);font-weight:600}
+@media (max-width:760px){.top nav{display:none}}
+
+/* ── hero ── */
+.hero{min-height:min(100svh,920px);display:flex;flex-direction:column;justify-content:space-between;padding-block:clamp(40px,7vh,72px) 40px}
+.hero .main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:48px;align-items:end;flex:1;padding-block:clamp(40px,8vh,96px)}
+.name{font-size:clamp(60px,10vw,96px);font-weight:800;line-height:1;letter-spacing:-.04em;margin:0}
+.latin{margin-top:14px;font-size:14px;font-weight:600;letter-spacing:.32em;color:var(--muted)}
+.thesis{margin:44px 0 0;font-size:clamp(23px,2.7vw,32px);font-weight:600;line-height:1.4;letter-spacing:-.025em;text-wrap:balance;max-width:20em}
+.lede{margin:18px 0 0;color:var(--muted);max-width:34em}
+.acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 22px;border-radius:10px;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);transition:transform .2s cubic-bezier(.16,1,.3,1),border-color .2s,background .2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--blue)}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.btn.pri:hover{background:color-mix(in srgb,var(--blue) 86%,var(--ink))}
+.clock{justify-self:end;text-align:right}
+.clock .t{font-size:clamp(72px,11vw,96px);font-weight:200;line-height:1;letter-spacing:-.04em;color:var(--blue)}
+.clock .s{margin-top:10px;font-size:15px;color:var(--muted)}
+.hero .rb{--h:16px}
+@media (max-width:820px){
+  .hero .main{grid-template-columns:1fr;gap:36px}
+  .clock{justify-self:start;text-align:left}
+  .clock .t{font-size:56px}
+  .hero .rb .labels{display:none}
+  .hero .rb .times span:nth-child(2){display:none}
+}
+
+/* ── shared section ── */
+.sec{padding-block:clamp(96px,13vw,160px)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:clamp(32px,6vw,96px)}
+.mark{position:sticky;top:96px;align-self:start}
+.mark .t{font-size:clamp(56px,7vw,88px);font-weight:200;line-height:1;letter-spacing:-.04em;color:var(--blue)}
+.mark .s{margin-top:10px;font-size:15px;color:var(--muted)}
+h2{font-size:clamp(32px,4.4vw,52px);font-weight:700;line-height:1.18;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.body p{max-width:36em;color:var(--muted);margin:24px 0 0}
+@media (max-width:820px){.split{grid-template-columns:1fr}.mark{position:static}}
+
+/* facts */
+.facts{margin:48px 0 0;display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--line)}
+.facts dt,.facts dd{margin:0;padding:18px 0;border-bottom:1px solid var(--line)}
+.facts dt{color:var(--muted);font-size:15px;padding-right:32px;white-space:nowrap}
+.facts dd{font-weight:500}
+.facts dd span{color:var(--muted);font-weight:400}
+
+/* projects */
+#projects{position:relative}
+.pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;justify-content:safe center;overflow:hidden;overflow:clip;padding-top:56px}
+.phead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:40px}
+.pmeta{text-align:right;color:var(--muted);font-size:15px;white-space:nowrap}
+.pmeta b{color:var(--ink);font-weight:600}
+.track{display:flex;gap:24px;width:max-content;will-change:transform;padding-left:max(24px,calc((100vw - 1200px)/2 + 24px));padding-right:24px}
+.card{flex:0 0 auto;width:min(420px,80vw);display:flex;flex-direction:column;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(14,26,43,.04);transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s,border-color .35s}
+.card:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--blue) 50%,var(--line));box-shadow:0 18px 40px -18px rgba(11,71,194,.35)}
+.card canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;max-width:100%;background:var(--surface);border-bottom:1px solid var(--line)}
+.cb{padding:22px 24px 8px;display:flex;flex-direction:column;gap:10px;flex:1}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.tm{font-size:13px;color:var(--muted);transition:color .3s}
+.tm.on{color:var(--blue);font-weight:600}
+.st{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted)}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.6}
+.st.live i{background:var(--up);opacity:1;box-shadow:0 0 0 3px color-mix(in srgb,var(--up) 22%,transparent)}
+.card h3{margin:0;font-size:22px;font-weight:700;letter-spacing:-.025em;line-height:1.3}
+.card p{margin:0;color:var(--muted);font-size:15.5px;line-height:1.65}
+.stack{margin:auto 0 0;padding-top:10px;font-size:13.5px;color:var(--muted)}
+.go{display:flex;justify-content:space-between;align-items:center;padding:16px 24px 20px;font-size:15px;font-weight:600;color:var(--blue)}
+.go.soft{color:var(--muted);font-weight:500;font-size:14.5px}
+.go svg{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.card:hover .go svg{transform:translateX(5px)}
+.static .pin{position:static;height:auto;padding-block:120px}
+.static .track{flex-wrap:wrap;width:auto;transform:none!important}
+@media (max-height:820px){
+  .pin{padding-top:64px;padding-bottom:12px}
+  .phead{margin-bottom:20px}
+  #h-proj{font-size:clamp(26px,3.4vw,38px)}
+  .card canvas{aspect-ratio:21/9}
+  .cb{padding:16px 20px 4px;gap:6px}
+  .card h3{font-size:19px}
+  .card p{font-size:14.5px;line-height:1.55}
+  .go{padding:12px 20px 16px}
+}
+@media (max-height:620px){.card canvas{display:none}}
+
+/* experience */
+.tl{position:relative;list-style:none;margin:48px 0 0;padding:0 0 0 32px}
+.tl::before,.tl::after{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:2px;background:var(--track);border-radius:2px}
+.tl::after{background:var(--blue);transform-origin:top;transform:scaleY(var(--tp,0))}
+.tl>li{position:relative;padding-bottom:40px}
+.tl>li:last-child{padding-bottom:0}
+.tl>li::before{content:"";position:absolute;left:-32px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--line);transition:border-color .3s,background .3s}
+.tl>li.on::before{border-color:var(--blue);background:var(--blue)}
+.when{font-size:14px;color:var(--muted)}
+.tl h3{margin:2px 0 6px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.tl p{margin:0;color:var(--muted);font-size:16px;max-width:36em}
+.tl strong{color:var(--ink);font-weight:600}
+.tl .auto{margin:12px 0 0;padding:0 0 0 1.1em;color:var(--muted);font-size:15.5px;line-height:1.65;max-width:36em}
+.tl .auto li{margin-top:4px}
+.tl .auto li::marker{color:var(--blue)}
+
+/* contact: drenched */
+#contact{background:var(--field);color:var(--on-field)}
+#contact .mark .t{color:var(--on-field)}
+#contact .mark .s{color:var(--on-field-2)}
+#contact h2{font-size:clamp(36px,5.6vw,68px)}
+#contact .body p{color:var(--on-field-2)}
+.links{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:0;margin-top:56px;border-top:1px solid var(--field-line)}
+.lk{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;border-bottom:1px solid var(--field-line);text-decoration:none;min-width:0}
+.lk:first-child{padding-right:24px;border-right:1px solid var(--field-line)}
+.lk:last-child{padding-left:24px}
+.lk small{display:block;font-size:14px;color:var(--on-field-2)}
+.lk b a{text-decoration:none}
+.lk b a:hover{text-decoration:underline}
+.lk b{font-size:clamp(17px,1.7vw,21px);font-weight:600;overflow-wrap:break-word;word-break:keep-all}
+.lk button{font:inherit;font-size:14.5px;font-weight:600;height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--field-line);background:transparent;color:var(--on-field);cursor:pointer;white-space:nowrap;transition:background .2s}
+.lk button:hover{background:rgba(255,255,255,.12)}
+.lk svg{font-size:22px}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:96px;font-size:14px;color:var(--on-field-2)}
+#contact ::selection{background:#fff;color:var(--field)}
+#contact :focus-visible{outline-color:#fff}
+@media (max-width:700px){.links{grid-template-columns:1fr}.lk:first-child{border-right:0;padding-right:0}.lk:last-child{padding-left:0}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="arr" viewBox="0 0 20 20"><path d="M4 10h11M11 5.5 15.5 10 11 14.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ext" viewBox="0 0 20 20"><path d="M7 13 14 6M8 6h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="top gut" id="top" aria-label="세션 진행 막대">
+  <div class="in wrap">
+    <a class="who" href="#hero">김경도</a>
+    <div class="rb" data-rb></div>
+    <nav aria-label="섹션"><a href="#about" data-nav="about">소개</a><a href="#projects" data-nav="projects">프로젝트</a><a href="#exp" data-nav="exp">경험</a><a href="#contact" data-nav="contact">연락</a></nav>
+    <div class="clk tnum"><b data-clk>08:30</b> <span data-ses>장전 동시호가</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="hero gut" id="hero">
+    <div class="wrap" style="width:100%;display:flex;flex-direction:column;flex:1">
+      <div class="main">
+        <div>
+          <h1 class="name">김경도</h1>
+          <div class="latin">KIM GYEONGDO</div>
+          <p class="thesis">시장에서 생긴 질문을,<br>직접 만든 도구로 답합니다.</p>
+          <p class="lede">경제학과 데이터사이언스를 공부했고, KB증권 패시브영업본부에서 ETF AP/LP 업무를 지원했습니다. 실무에서 본 문제를 사이트, 봇, 자동매매로 직접 만들어 확인합니다.</p>
+          <div class="acts">
+            <a class="btn pri" href="#projects">프로젝트 보기<svg class="ic"><use href="#arr"/></svg></a>
+            <a class="btn" href="#contact">이메일</a>
+          </div>
+        </div>
+        <div class="clock" aria-hidden="true">
+          <div class="t tnum" data-clk>08:30</div>
+          <div class="s" data-ses>장전 동시호가</div>
+        </div>
+      </div>
+      <div class="rb" data-rb data-full></div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="about" aria-labelledby="h-about">
+    <div class="wrap split">
+      <div class="mark" aria-hidden="true"><div class="t tnum">09:00</div><div class="s">개장</div></div>
+      <div class="body">
+        <h2 id="h-about">데스크에서 배우고,<br>코드로 정리합니다.</h2>
+        <p>ETF 설정·환매 CU 검증, 매매보고서·정산, AP/LP 계약서 검토처럼 운용과 트레이딩을 받쳐주는 일을 가까이서 했습니다. 반복되는 확인 작업은 VBA로, 궁금한 시장 데이터는 Python으로 직접 자동화하고 시각화합니다.</p>
+        <dl class="facts">
+          <dt>학력</dt><dd>국민대학교 경제학과 · 데이터사이언스 융합전공 <span>· GPA 4.39/4.5</span></dd>
+          <dt>입사 가능</dt><dd>2026년 2학기 졸업요건 충족 <span>· 학기 종료 후 바로 출근 가능</span></dd>
+          <dt>자격</dt><dd>투자자산운용사 <span>(94점)</span> · 펀드투자권유자문인력 · SQLD · TOEIC 910</dd>
+          <dt>준비 중</dt><dd>CFA Level I</dd>
+          <dt>기술</dt><dd>Python · SQL · Excel VBA · GitHub Actions <span>· 한국투자증권 KIS · KRX · FRED · Upbit API</span></dd>
+          <dt>관심</dt><dd>ETF 운용 · LP · 퀀트 리서치 · 시스템매매</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" aria-labelledby="h-proj">
+    <div class="pin">
+      <div class="wrap gut" style="width:100%">
+        <div class="phead">
+          <h2 id="h-proj">직접 만들고,<br>직접 돌립니다.</h2>
+          <div class="pmeta tnum" aria-hidden="true"><b data-pc>1</b> / <span data-pt>7</span></div>
+        </div>
+      </div>
+      <div class="track" data-track>
+        <a class="card" href="https://gyeongdokim.github.io/KRETFMAP/" target="_blank" rel="noopener">
+          <canvas data-art="treemap" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st live"><i></i>운영 중</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>KR ETF MAP</h3>
+            <p>국내 상장 ETF 전체를 한 화면의 트리맵으로 봅니다. 수익률·자금흐름·괴리율로 색을 바꿔 시장이 어디로 쏠리는지 확인합니다. 매일 자동 갱신.</p>
+            <div class="stack">KRX Open API · GitHub Actions · GitHub Pages</div></div>
+          <div class="go"><span>사이트 열기</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim/monitor" target="_blank" rel="noopener">
+          <canvas data-art="arb" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st live"><i></i>실행 중</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>거래소 간 차익 모니터</h3>
+            <p>업비트와 빗썸의 같은 코인 가격 차이를 감시하고, 수수료를 뺀 실제 기대수익을 계산합니다. 매매일지와 함께 소액으로 실전 기록 중.</p>
+            <div class="stack">Python · Upbit · Bithumb</div></div>
+          <div class="go"><span>저장소 열기</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim" target="_blank" rel="noopener">
+          <canvas data-art="inav" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st"><i></i>진행 중</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>해외 ETF 괴리율 시스템매매</h3>
+            <p>국내 상장 해외 ETF의 시장가와 iNAV를 실시간으로 비교하고, 기준을 넘으면 주문을 내는 자동매매. 증권사 API로 실제 매매까지 연결합니다.</p>
+            <div class="stack">한국투자증권 KIS API · Python</div></div>
+          <div class="go soft"><span>저장소 정리 중 · GitHub 프로필</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim" target="_blank" rel="noopener">
+          <canvas data-art="donchian" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st"><i></i>페이퍼 트레이딩</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>크립토 추세추종 봇</h3>
+            <p>여러 기간의 돈치안 채널 신호를 합치고, 목표 변동성 40%에 맞춰 포지션 크기를 조절합니다. 업비트 BTC·ETH 대상.</p>
+            <div class="stack">돈치안 채널 앙상블 · 변동성 타기팅 · Upbit API</div></div>
+          <div class="go soft"><span>저장소 정리 중 · GitHub 프로필</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim" target="_blank" rel="noopener">
+          <canvas data-art="scatter" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st"><i></i>공개 예정</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>Fed Policy Change Detector</h3>
+            <p>FRED 데이터만으로 지금 연준의 정책 기조를 수치로 판단합니다. Soft·Hard 데이터 산포도와 물가 확산지수로 방향 전환을 포착합니다.</p>
+            <div class="stack">FRED · Diffusion Index · Base44</div></div>
+          <div class="go soft"><span>저장소 정리 중 · GitHub 프로필</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim" target="_blank" rel="noopener">
+          <canvas data-art="macro" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st"><i></i>완료</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>매크로 대시보드 + 텔레그램 봇</h3>
+            <p>한·미 주요 경제지표를 한 대시보드에 모으고, 매일 아침 요약을 텔레그램으로 받아봅니다.</p>
+            <div class="stack">Plotly Dash · FRED API · Telegram</div></div>
+          <div class="go soft"><span>저장소 정리 중 · GitHub 프로필</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+        <a class="card" href="https://github.com/gyeongdokim" target="_blank" rel="noopener">
+          <canvas data-art="bot" width="840" height="472" aria-hidden="true"></canvas>
+          <div class="cb"><div class="ch"><span class="st live"><i></i>운영 중</span><span class="tm tnum" data-tm aria-hidden="true"></span></div><h3>KOFIA 채용 알림봇</h3>
+            <p>금융투자협회 회원사 채용 게시판을 주기적으로 확인해, 신입이 지원할 수 있는 공고만 골라 텔레그램으로 알려줍니다.</p>
+            <div class="stack">GitHub Actions · Python · Telegram</div></div>
+          <div class="go soft"><span>저장소 정리 중 · GitHub 프로필</span><svg class="ic"><use href="#ext"/></svg></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="exp" aria-labelledby="h-exp">
+    <div class="wrap split">
+      <div class="mark" aria-hidden="true"><div class="t tnum">15:20</div><div class="s">장마감 동시호가</div></div>
+      <div class="body">
+        <h2 id="h-exp">현장 가까이에서<br>쌓아온 경험</h2>
+        <ol class="tl" data-tl>
+          <li><div class="when tnum">2025.12 – 2026.06</div><h3>KB증권 패시브영업본부 · 업무 지원</h3><p>ETF AP/LP 지원(계약서 검토, <strong>설정·환매 CU 검증</strong>), 매매보고서·정산 지원(SettleNet, 국채선물, 협의대량), 데이터 취합.</p>
+            <ul class="auto">
+              <li>예탁원 AP 데이터와 운용사 장외매매를 유사 매칭으로 대조해 <strong>결제 전 정합성 검증</strong>을 VBA로 자동화</li>
+              <li>국채선물 3·10년물 평균가를 자동 산출하는 매매보고서 작성</li>
+              <li>SettleNet 항목을 신설해 재발송 시간을 <strong>5분에서 1분</strong>으로 단축</li>
+            </ul></li>
+          <li><div class="when tnum">2025.07 – 2025.12</div><h3>한국은행 대학생 커뮤니케이터 1기</h3><p>커뮤니케이션국 조사역과 협업해 공식 인스타그램을 <strong>팔로워 0명에서 531명</strong>으로 키움.</p></li>
+          <li><div class="when tnum">2024.12 – 2025.03</div><h3>국민대 UROP · 팀 '회귀자'</h3><p>기후변화와 온열·한랭질환 의료비 패널분석. 데이터 수집과 전처리 담당.</p></li>
+          <li><div class="when tnum">2024.09 – 2024.12</div><h3>투자동아리 Wyvern · 데이터사이언스 학회 Adam</h3><p>제룡전기·HD현대중공업 기업분석 보고서를 써서 오렌지보드에 게재(조회 700+). Adam에서 Python 분석과 SQLD 스터디 진행.</p></li>
+          <li><div class="when tnum">2022.10 – 2024.04</div><h3>육군 9사단 수색대대 · 통신병</h3><p>형을 따라 직계가족병 제도로 지원해 복무.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec gut" id="contact" aria-labelledby="h-contact">
+    <div class="wrap">
+      <div class="split">
+        <div class="mark" aria-hidden="true"><div class="t tnum">15:30</div><div class="s">장 마감</div></div>
+        <div class="body">
+          <h2 id="h-contact">함께 일할 팀을<br>찾고 있습니다.</h2>
+          <p>ETF 운용·LP·트레이딩, 퀀트 리서치 포지션에 관심이 있습니다. 편하게 연락 주세요.</p>
+          <div class="links">
+            <div class="lk"><div><small>이메일</small><b><a id="mail" href="mailto:gyeongdokim02@gmail.com">gyeongdokim02@gmail.com</a></b></div><button type="button" id="copy">복사</button></div>
+            <a class="lk" href="https://github.com/gyeongdokim" target="_blank" rel="noopener"><div><small>GitHub</small><b>github.com/gyeongdokim</b></div><svg class="ic"><use href="#ext"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <footer><span>© 2026 김경도</span><span>국민대학교 경제학과 · 2026년 2학기 졸업요건 충족</span></footer>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  const root=document.documentElement,RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+
+  /* KRX session: 08:30–09:00 장전, 09:00–15:20 정규장, 15:20–15:30 장마감 동시호가 (minutes from midnight) */
+  const T0=510,T1=930;
+  const sections=[{id:'hero',t:510},{id:'about',t:540},{id:'projects',t:600},{id:'exp',t:920},{id:'contact',t:930}];
+  const pos=t=>(t-T0)/(T1-T0);
+
+  /* build ribbons */
+  const segs=()=>'<div class="seg pre"></div><div class="gap"></div><div class="seg reg"></div><div class="gap"></div><div class="seg post"></div>';
+  $$('[data-rb]').forEach(r=>{
+    let h='';
+    if(r.hasAttribute('data-full')){
+      h+='<div class="times tnum"><span style="left:0">08:30</span><span style="left:'+pos(540)*100+'%;transform:translateX(-50%)">09:00</span><span style="right:0">15:30</span></div>';
+    }
+    h+='<div class="bar"><div class="lay base">'+segs()+'</div><div class="lay fill">'+segs()+'</div></div>';
+    if(r.hasAttribute('data-full')){
+      const lab={about:'소개',projects:'프로젝트',exp:'경험',contact:'연락'};
+      /* 경험(15:20)과 연락(15:30)은 리본 끝 2% 안에 붙어 있어 한 묶음으로 오른쪽 끝에 둔다 */
+      const ln=(id,st)=>'<a href="#'+id+'" data-nav="'+id+'"'+(st?' style="'+st+'"':'')+'>'+lab[id]+'</a>';
+      h+='<div class="labels">'+['about','projects'].map(id=>ln(id,'left:'+pos(sections.find(s=>s.id===id).t)*100+'%')).join('')
+        +'<span class="end">'+ln('exp')+ln('contact')+'</span></div>';
+    }
+    r.innerHTML=h;
+  });
+
+  const fmt=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(Math.floor(m%60)).padStart(2,'0');
+  const session=m=>m<540?'장전 동시호가':m<920?'정규장':m<930?'장마감 동시호가':'장 마감';
+
+  /* scroll → time */
+  let anchors=[];
+  function measure(){
+    const max=root.scrollHeight-innerHeight;
+    anchors=sections.map(s=>({y:Math.min(max,document.getElementById(s.id).getBoundingClientRect().top+scrollY),t:s.t,id:s.id}));
+    anchors[0].y=0;
+    anchors.push({y:max,t:T1});
+  }
+  function timeAt(y){
+    for(let i=0;i<anchors.length-1;i++){const a=anchors[i],b=anchors[i+1];
+      if(y<b.y||i===anchors.length-2){const k=b.y>a.y?clamp((y-a.y)/(b.y-a.y),0,1):1;return {t:a.t+(b.t-a.t)*k,id:a.id}}}
+    return {t:T1,id:'contact'};
+  }
+
+  /* projects horizontal */
+  const pj=$('#projects'),track=$('[data-track]'),cards=[...track.children];
+  $('[data-pt]').textContent=cards.length;
+  const tms=$$('[data-tm]'),PT0=600,PT1=920;
+  const cardT=cards.map((c,i)=>PT0+Math.round((PT1-10-PT0)*i/Math.max(1,cards.length-1)));
+  tms.forEach((e,i)=>e.textContent='체결 '+fmt(cardT[i]));
+  const pc=$('[data-pc]');
+  let dist=0;
+  function sizePj(){
+    if(RM){pj.classList.add('static');pc.textContent='1–'+cards.length;return}
+    dist=Math.max(0,track.scrollWidth-innerWidth);pj.style.height=(dist+innerHeight)+'px';
+  }
+
+  const tl=$('[data-tl]'),items=[...tl.querySelectorAll(':scope>li')],top=$('#top'),hero=$('#hero');
+  function frame(){
+    tick=false;
+    const y=scrollY,{t,id}=timeAt(y),p=pos(t);
+    root.style.setProperty('--p',p);
+    $$('[data-clk]').forEach(e=>e.textContent=fmt(t));
+    $$('[data-ses]').forEach(e=>e.textContent=session(t));
+    $$('[data-nav]').forEach(a=>a.classList.toggle('on',a.dataset.nav===id));
+    const shown=hero.getBoundingClientRect().bottom<80;
+    if(shown!==top.classList.contains('show')){top.classList.toggle('show',shown);top.inert=!shown}
+    tms.forEach((e,i)=>e.classList.toggle('on',t>=cardT[i]));
+    if(!RM){
+      const r=pj.getBoundingClientRect(),tot=pj.offsetHeight-innerHeight,k=tot>0?clamp(-r.top/tot,0,1):0;
+      track.style.transform='translate3d('+(-k*dist)+'px,0,0)';
+      /* 화면에 온전히 보이는 카드 범위 (없으면 가장 많이 보이는 카드) */
+      let lo=0,hi=0,best=0,bw=-1;
+      cards.forEach((c,i)=>{const b=c.getBoundingClientRect(),w=Math.min(b.right,innerWidth)-Math.max(b.left,0);
+        if(b.left>=-1&&b.right<=innerWidth+1){lo=lo||i+1;hi=i+1}
+        if(w>bw){bw=w;best=i+1}});
+      if(!lo)lo=hi=best;
+      pc.textContent=lo===hi?lo:lo+'–'+hi;
+    }
+    const tr=tl.getBoundingClientRect(),mid=innerHeight*.62;
+    tl.style.setProperty('--tp',clamp((mid-tr.top)/tr.height,0,1));
+    items.forEach(li=>li.classList.toggle('on',li.getBoundingClientRect().top+10<mid));
+  }
+  /* 키보드 포커스: .pin은 overflow:clip이라 브라우저가 가로로 스크롤하지 못하므로, 카드가 보이는 세로 위치로 직접 이동 */
+  track.addEventListener('focusin',e=>{
+    if(RM)return;
+    const c=e.target.closest('.card');if(!c)return;
+    requestAnimationFrame(()=>{
+      const padL=parseFloat(getComputedStyle(track).paddingLeft)||0,
+        off=c.getBoundingClientRect().left-track.getBoundingClientRect().left-padL,
+        k=dist>0?clamp(off/dist,0,1):0,tot=pj.offsetHeight-innerHeight;
+      scrollTo(0,pj.getBoundingClientRect().top+scrollY+k*tot);
+    });
+  });
+  top.inert=true;
+
+  let tick=false;const req=()=>{if(!tick){tick=true;requestAnimationFrame(frame)}};
+  addEventListener('scroll',req,{passive:true});
+  addEventListener('resize',()=>{sizePj();measure();drawCards();req()});
+
+  /* card art — drawn from theme tokens */
+  let seed=1;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  function drawCards(){
+    $$('canvas[data-art]').forEach(c=>{
+      const x=c.getContext('2d'),W=c.width,H=c.height,bl=cv('--blue'),up=cv('--up'),ln=cv('--line'),tr=cv('--track'),mu=cv('--muted'),bg=cv('--surface');
+      seed=c.dataset.art.length*977+13;x.clearRect(0,0,W,H);x.fillStyle=bg;x.fillRect(0,0,W,H);
+      x.strokeStyle=tr;x.lineWidth=1.5;for(let g=1;g<5;g++){x.beginPath();x.moveTo(0,H*g/5);x.lineTo(W,H*g/5);x.stroke()}
+      const walk=(n,s)=>{const a=[];let v=0;for(let i=0;i<n;i++){v+=(rnd()-.48)*s;a.push(v)}return a};
+      const plot=(a,col,lw,lo,hi,pad=44)=>{x.beginPath();a.forEach((y,i)=>{const X=pad+(W-2*pad)*i/(a.length-1),Y=H-pad-(H-2*pad)*(y-lo)/(hi-lo);i?x.lineTo(X,Y):x.moveTo(X,Y)});x.strokeStyle=col;x.lineWidth=lw;x.lineJoin='round';x.stroke()};
+      const a=c.dataset.art;
+      if(a==='treemap'){
+        const rs=[];(function sp(x0,y0,w,h,d){if(d>4||w*h<9000){rs.push([x0,y0,w,h]);return}const r=.35+rnd()*.3;
+          if(w>h){sp(x0,y0,w*r,h,d+1);sp(x0+w*r,y0,w*(1-r),h,d+1)}else{sp(x0,y0,w,h*r,d+1);sp(x0,y0+h*r,w,h*(1-r),d+1)}})(0,0,W,H,0);
+        rs.forEach(([p,q,w,h])=>{const u=rnd()-.45;x.fillStyle=u>0?up:bl;x.globalAlpha=.14+Math.min(.75,Math.abs(u)*1.5);x.fillRect(p+2,q+2,w-4,h-4)});x.globalAlpha=1;
+      }else if(a==='inav'){
+        const n=walk(90,3),p=n.map((v,i)=>v+(i>30&&i<62?Math.sin((i-30)/32*Math.PI)*8:0)+(rnd()-.5)*1.1);
+        const lo=Math.min(...n,...p)-2,hi=Math.max(...n,...p)+2;x.globalAlpha=.45;plot(n,mu,4,lo,hi);x.globalAlpha=1;plot(p,bl,4,lo,hi);
+      }else if(a==='donchian'){
+        const p=walk(120,4).map((v,i)=>v+i*.18),u=[],d=[];for(let i=0;i<p.length;i++){const s=p.slice(Math.max(0,i-20),i+1);u.push(Math.max(...s));d.push(Math.min(...s))}
+        const lo=Math.min(...d)-2,hi=Math.max(...u)+2;x.globalAlpha=.4;plot(u,mu,2.5,lo,hi);plot(d,mu,2.5,lo,hi);x.globalAlpha=1;plot(p,bl,4,lo,hi);
+      }else if(a==='arb'){
+        const A=walk(90,3),B=A.map(v=>v-3+(rnd()-.5)*2.4);
+        for(let i=0;i<90;i+=3){const X=44+(W-88)*i/89,dd=A[i]-B[i],hot=dd>3.5;x.fillStyle=hot?bl:mu;x.globalAlpha=hot?.9:.25;const h=dd*14;x.fillRect(X,H-44-h,11,h)}x.globalAlpha=1;
+        const lo=Math.min(...B)-3,hi=Math.max(...A)+21;x.globalAlpha=.5;plot(B,mu,3,lo,hi);x.globalAlpha=1;plot(A,bl,3,lo,hi);
+      }else if(a==='scatter'){
+        x.strokeStyle=ln;x.lineWidth=2;x.beginPath();x.moveTo(W/2,32);x.lineTo(W/2,H-32);x.moveTo(32,H/2);x.lineTo(W-32,H/2);x.stroke();
+        for(let i=0;i<70;i++){const t=i/70,X=W/2+(Math.cos(t*5)*.3+t*.5-.25)*W*.8+(rnd()-.5)*40,Y=H/2+(Math.sin(t*4)*.3-t*.3+.15)*H*.9+(rnd()-.5)*40;
+          x.beginPath();x.arc(X,Y,i>62?9:6,0,7);x.fillStyle=bl;x.globalAlpha=i>62?1:.15+t*.45;x.fill()}x.globalAlpha=1;
+      }else if(a==='macro'){
+        [walk(60,3),walk(60,3),walk(60,3)].forEach((s,j)=>{const lo=Math.min(...s)-1,hi=Math.max(...s)+1;x.save();x.translate(0,(j-1)*H*.26);x.scale(1,.42);x.translate(0,H*.68);
+          x.globalAlpha=j===0?1:.4;plot(s,j===0?bl:mu,5,lo,hi);x.restore()});x.globalAlpha=1;
+      }else if(a==='bot'){
+        for(let i=0;i<4;i++){const yy=56+i*98,w=W*(.42+rnd()*.32),xl=i%2?W-56-w:56,last=i===3;
+          x.fillStyle=last?bl:tr;x.beginPath();x.roundRect?x.roundRect(xl,yy,w,66,16):x.rect(xl,yy,w,66);x.fill();
+          if(last){x.fillStyle=cv('--on-blue');x.font='600 25px '+cv('--font');x.fillText('[신입] ETF운용 채용 공고',xl+24,yy+42)}
+          else{x.fillStyle=mu;x.globalAlpha=.35;x.fillRect(xl+24,yy+28,w*.55,10);x.globalAlpha=1}}
+      }
+    });
+  }
+
+  /* copy email */
+  $('#copy').addEventListener('click',e=>{
+    const b=e.currentTarget,t='gyeongdokim02@gmail.com',done=s=>{b.textContent=s;setTimeout(()=>b.textContent='복사',1800)};
+    if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>done('복사됨'),sel);else sel();
+    function sel(){const r=document.createRange();r.selectNodeContents($('#mail'));const s=getSelection();s.removeAllRanges();s.addRange(r);done('선택됨')}
+  });
+
+  const mq=matchMedia('(prefers-color-scheme: dark)');mq.addEventListener&&mq.addEventListener('change',drawCards);
+  new MutationObserver(drawCards).observe(root,{attributes:true,attributeFilter:['data-theme']});
+  sizePj();measure();drawCards();frame();
+  document.fonts&&document.fonts.ready.then(()=>{sizePj();measure();drawCards();req()});
+})();
+</script>
+
+</html>
